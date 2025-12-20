@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle Financeiro</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<style>
+:root{
+  --bg:#0f0f0f;
+  --card:#1b1b1b;
+  --text:#fff;
+  --sub:#bdbdbd;
+  --blue:#2f80ed;
+  --red:#eb5757;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+
+/* LOGIN */
+.login-page{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.login-box{
+  background:var(--card);
+  padding:30px;
+  border-radius:12px;
+  width:100%;
+  max-width:360px;
+  text-align:center;
+}
+
+.login-box h2{
+  margin-bottom:20px;
+}
+
+.login-box input{
+  width:100%;
+  padding:12px;
+  margin-bottom:12px;
+  border:none;
+  border-radius:6px;
+  background:#111;
+  color:#fff;
+}
+
+.login-box button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:6px;
+  background:var(--blue);
+  color:#fff;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.login-box p{
+  margin-top:10px;
+  color:var(--sub);
+}
+
+/* APP */
+#app{
+  display:none;
+  padding:20px;
+}
+
+.box{
+  background:var(--card);
+  padding:20px;
+  border-radius:12px;
+  margin-bottom:20px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;
+}
+
+input,select,button{
+  padding:10px;
+  border:none;
+  border-radius:6px;
+}
+
+input,select{
+  background:#111;
+  color:#fff;
+}
+
+button{
+  background:var(--blue);
+  color:#fff;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+button.delete{background:var(--red)}
+
+.table-container{
+  max-height:260px;
+  overflow-y:auto;
+  margin-top:10px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:8px;
+  border-bottom:1px solid #333;
+  text-align:center;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="login-page" id="loginPage">
+  <div class="login-box">
+    <h2>Entrar</h2>
+    <input id="email" placeholder="Email">
+    <input id="senha" type="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+    <p id="loginMsg"></p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<h1 style="text-align:center">Controle Financeiro</h1>
+
+<!-- PRODUTOS -->
+<div class="box">
+<h2>Produtos</h2>
+<div class="row">
+  <input id="novoProduto" placeholder="Novo produto">
+  <button onclick="addProduto()">Adicionar</button>
+</div>
+<div class="table-container">
+<table id="tProdutos"></table>
+</div>
+</div>
+
+<!-- VENDAS -->
+<div class="box">
+<h2>Vendas</h2>
+<div class="row">
+  <input type="date" id="vData">
+  <select id="vProduto"></select>
+  <input type="number" id="vQtd" placeholder="Qtd">
+  <input type="number" id="vValor" placeholder="Valor unitário">
+  <button onclick="addVenda()">Salvar</button>
+</div>
+<div class="table-container">
+<table id="tVendas"></table>
+</div>
+</div>
+
+<!-- SAÍDAS -->
+<div class="box">
+<h2>Saídas</h2>
+<div class="row">
+  <input type="date" id="sData">
+  <input id="sDesc" placeholder="Descrição">
+  <input type="number" id="sValor" placeholder="Valor">
+  <button onclick="addSaida()">Salvar</button>
+</div>
+<div class="table-container">
+<table id="tSaidas"></table>
+</div>
+</div>
+
+<!-- RESUMO -->
+<div class="box">
+<h2>Resumo</h2>
+<p>Entradas: R$ <span id="totalVendas">0</span></p>
+<p>Saídas: R$ <span id="totalSaidas">0</span></p>
+<p>Saldo: R$ <span id="saldoFinal">0</span></p>
+<canvas id="grafico"></canvas>
+</div>
+
+</div>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyDjXpFFtCmzYVwFxFP5paVSmG1a7OZ52Y4",
+  authDomain: "controle-loja-58069.firebaseapp.com",
+  projectId: "controle-loja-58069"
+});
+
+const db=firebase.firestore();
+const auth=firebase.auth();
+
+let liberado=false;
+const hoje=()=>new Date().toISOString().slice(0,10);
+const mesAtual=()=>new Date().toISOString().slice(0,7);
+vData.value=sData.value=hoje();
+
+/* LOGIN MANUAL */
+function login(){
+  auth.signInWithEmailAndPassword(email.value,senha.value)
+    .then(()=>{
+      liberado=true;
+      loginPage.style.display="none";
+      app.style.display="block";
+      carregarProdutos();
+      render();
+    })
+    .catch(()=>loginMsg.innerText="Email ou senha inválidos");
+}
+
+/* PRODUTOS */
+function addProduto(){
+  if(!novoProduto.value)return;
+  db.collection("produtos").add({nome:novoProduto.value})
+    .then(()=>{novoProduto.value="";carregarProdutos();});
+}
+
+function carregarProdutos(){
+  vProduto.innerHTML="";
+  tProdutos.innerHTML="<tr><th>Produto</th><th></th></tr>";
+  db.collection("produtos").get().then(s=>{
+    s.forEach(d=>{
+      const n=d.data().nome;
+      vProduto.innerHTML+=`<option>${n}</option>`;
+      tProdutos.innerHTML+=`
+      <tr>
+        <td>${n}</td>
+        <td><button class="delete" onclick="removerProduto('${d.id}','${n}')">X</button></td>
+      </tr>`;
+    });
+  });
+}
+
+function removerProduto(id,n){
+  db.collection("vendas").where("produto","==",n).get().then(s=>{
+    if(!s.empty)return alert("Produto possui vendas");
+    if(confirm("Remover produto?"))
+      db.collection("produtos").doc(id).delete().then(carregarProdutos);
+  });
+}
+
+/* VENDAS / SAÍDAS */
+function addVenda(){
+  db.collection("vendas").add({
+    data:vData.value,
+    produto:vProduto.value,
+    qtd:+vQtd.value,
+    total:+vQtd.value * +vValor.value,
+    mes:mesAtual()
+  }).then(render);
+}
+
+function addSaida(){
+  db.collection("saidas").add({
+    data:sData.value,
+    descricao:sDesc.value,
+    valor:+sValor.value,
+    mes:mesAtual()
+  }).then(render);
+}
+
+/* RENDER */
+let chart;
+function render(){
+  Promise.all([
+    db.collection("vendas").where("mes","==",mesAtual()).get(),
+    db.collection("saidas").where("mes","==",mesAtual()).get()
+  ]).then(([v,s])=>{
+    const vendas=v.docs.map(d=>d.data());
+    const saidas=s.docs.map(d=>d.data());
+
+    tVendas.innerHTML="<tr><th>Data</th><th>Produto</th><th>Qtd</th><th>Total</th></tr>";
+    vendas.forEach(v=>tVendas.innerHTML+=`<tr><td>${v.data}</td><td>${v.produto}</td><td>${v.qtd}</td><td>${v.total}</td></tr>`);
+
+    tSaidas.innerHTML="<tr><th>Data</th><th>Descrição</th><th>Valor</th></tr>";
+    saidas.forEach(s=>tSaidas.innerHTML+=`<tr><td>${s.data}</td><td>${s.descricao}</td><td>${s.valor}</td></tr>`);
+
+    const tv=vendas.reduce((a,b)=>a+b.total,0);
+    const ts=saidas.reduce((a,b)=>a+b.valor,0);
+
+    totalVendas.innerText=tv.toFixed(2);
+    totalSaidas.innerText=ts.toFixed(2);
+    saldoFinal.innerText=(tv-ts).toFixed(2);
+
+    if(chart)chart.destroy();
+    chart=new Chart(grafico,{
+      type:"bar",
+      data:{labels:["Entradas","Saídas"],datasets:[{data:[tv,ts],backgroundColor:["#2f80ed","#eb5757"]}]}
+    });
+  });
+}
+</script>
+
+</body>
+</html>
