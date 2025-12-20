@@ -11,82 +11,50 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <style>
-:root{
-  --bg:#0f0f0f;
-  --card:#1b1b1b;
-  --text:#fff;
-  --sub:#bdbdbd;
-  --blue:#2f80ed;
-  --red:#eb5757;
-}
-
-*{box-sizing:border-box}
-
 body{
   margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
+  font-family:Arial, sans-serif;
+  background:#0f0f0f;
+  color:#fff;
 }
-
-/* LOGIN */
 .login-page{
   height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
 }
-
 .login-box{
-  background:var(--card);
+  background:#1b1b1b;
   padding:30px;
-  border-radius:12px;
+  border-radius:10px;
   width:100%;
-  max-width:360px;
-  text-align:center;
+  max-width:350px;
 }
-
-.login-box h2{
-  margin-bottom:20px;
-}
-
-.login-box input{
+.login-box h2{text-align:center}
+.login-box input, .login-box button{
   width:100%;
   padding:12px;
-  margin-bottom:12px;
+  margin-top:10px;
   border:none;
   border-radius:6px;
+}
+.login-box input{
   background:#111;
   color:#fff;
 }
-
 .login-box button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:6px;
-  background:var(--blue);
+  background:#2f80ed;
   color:#fff;
-  font-size:16px;
   font-weight:bold;
   cursor:pointer;
 }
 
-.login-box p{
-  margin-top:10px;
-  color:var(--sub);
-}
-
-/* APP */
-#app{
-  display:none;
-  padding:20px;
-}
+#app{display:none;padding:20px}
 
 .box{
-  background:var(--card);
+  background:#1b1b1b;
   padding:20px;
-  border-radius:12px;
+  border-radius:10px;
   margin-bottom:20px;
 }
 
@@ -101,37 +69,30 @@ input,select,button{
   border:none;
   border-radius:6px;
 }
-
 input,select{
   background:#111;
   color:#fff;
 }
-
 button{
-  background:var(--blue);
+  background:#2f80ed;
   color:#fff;
-  cursor:pointer;
   font-weight:bold;
+  cursor:pointer;
 }
-
-button.delete{background:var(--red)}
+.delete{background:#eb5757}
 
 .table-container{
-  max-height:260px;
+  max-height:250px;
   overflow-y:auto;
-  margin-top:10px;
 }
-
 table{
   width:100%;
   border-collapse:collapse;
 }
-
 th,td{
   padding:8px;
   border-bottom:1px solid #333;
   text-align:center;
-  font-size:14px;
 }
 </style>
 </head>
@@ -145,7 +106,7 @@ th,td{
     <input id="email" placeholder="Email">
     <input id="senha" type="password" placeholder="Senha">
     <button onclick="login()">Entrar</button>
-    <p id="loginMsg"></p>
+    <p id="msg"></p>
   </div>
 </div>
 
@@ -154,7 +115,6 @@ th,td{
 
 <h1 style="text-align:center">Controle Financeiro</h1>
 
-<!-- PRODUTOS -->
 <div class="box">
 <h2>Produtos</h2>
 <div class="row">
@@ -166,14 +126,13 @@ th,td{
 </div>
 </div>
 
-<!-- VENDAS -->
 <div class="box">
 <h2>Vendas</h2>
 <div class="row">
   <input type="date" id="vData">
   <select id="vProduto"></select>
   <input type="number" id="vQtd" placeholder="Qtd">
-  <input type="number" id="vValor" placeholder="Valor unitário">
+  <input type="number" id="vValor" placeholder="Valor">
   <button onclick="addVenda()">Salvar</button>
 </div>
 <div class="table-container">
@@ -181,7 +140,6 @@ th,td{
 </div>
 </div>
 
-<!-- SAÍDAS -->
 <div class="box">
 <h2>Saídas</h2>
 <div class="row">
@@ -195,7 +153,6 @@ th,td{
 </div>
 </div>
 
-<!-- RESUMO -->
 <div class="box">
 <h2>Resumo</h2>
 <p>Entradas: R$ <span id="totalVendas">0</span></p>
@@ -213,30 +170,31 @@ firebase.initializeApp({
   projectId: "controle-loja-58069"
 });
 
-const db=firebase.firestore();
-const auth=firebase.auth();
+const db = firebase.firestore();
+const auth = firebase.auth();
 
-let liberado=false;
-const hoje=()=>new Date().toISOString().slice(0,10);
-const mesAtual=()=>new Date().toISOString().slice(0,7);
-vData.value=sData.value=hoje();
+let chart;
+const hoje = () => new Date().toISOString().slice(0,10);
+const mesAtual = () => new Date().toISOString().slice(0,7);
+vData.value = sData.value = hoje();
 
-/* LOGIN MANUAL */
+/* LOGIN MANUAL (SEM AUTOLOGIN) */
+auth.signOut();
+
 function login(){
-  auth.signInWithEmailAndPassword(email.value,senha.value)
+  auth.signInWithEmailAndPassword(email.value, senha.value)
     .then(()=>{
-      liberado=true;
       loginPage.style.display="none";
       app.style.display="block";
       carregarProdutos();
       render();
     })
-    .catch(()=>loginMsg.innerText="Email ou senha inválidos");
+    .catch(()=>msg.innerText="Email ou senha inválidos");
 }
 
 /* PRODUTOS */
 function addProduto(){
-  if(!novoProduto.value)return;
+  if(!novoProduto.value) return;
   db.collection("produtos").add({nome:novoProduto.value})
     .then(()=>{novoProduto.value="";carregarProdutos();});
 }
@@ -259,7 +217,7 @@ function carregarProdutos(){
 
 function removerProduto(id,n){
   db.collection("vendas").where("produto","==",n).get().then(s=>{
-    if(!s.empty)return alert("Produto possui vendas");
+    if(!s.empty) return alert("Produto já possui vendas");
     if(confirm("Remover produto?"))
       db.collection("produtos").doc(id).delete().then(carregarProdutos);
   });
@@ -286,7 +244,6 @@ function addSaida(){
 }
 
 /* RENDER */
-let chart;
 function render(){
   Promise.all([
     db.collection("vendas").where("mes","==",mesAtual()).get(),
@@ -311,7 +268,10 @@ function render(){
     if(chart)chart.destroy();
     chart=new Chart(grafico,{
       type:"bar",
-      data:{labels:["Entradas","Saídas"],datasets:[{data:[tv,ts],backgroundColor:["#2f80ed","#eb5757"]}]}
+      data:{
+        labels:["Entradas","Saídas"],
+        datasets:[{data:[tv,ts],backgroundColor:["#2f80ed","#eb5757"]}]
+      }
     });
   });
 }
