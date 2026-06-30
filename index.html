@@ -1,152 +1,798 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FinanPro • Dashboard Financeiro</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Um Convite Sombrio e Romântico</title>
+    <style>
+        /* Importando fontes góticas e elegantes */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: #050103;
+            color: #e5d5c5;
+            font-family: 'Cormorant Garamond', serif;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        /* Atmosfera de Fundo Gótica */
+        .gothic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(circle at center, #2c030e 0%, #0a0104 70%, #000000 100%);
+            overflow: hidden;
+        }
+
+        /* Vitral Gótico de Fundo */
+        .stained-glass {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            
+            width: 80vh;
+            height: 80vh;
+            max-width: 90vw;
+            max-height: 90vw;
+            opacity: 0.12;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 2 C20 20 20 50 20 98 L80 98 C80 50 80 20 50 2' fill='none' stroke='%238a6d3b' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='45' r='20' fill='none' stroke='%238a6d3b' stroke-width='0.4'/%3E%3Cpath d='M50 2 L50 98 M20 70 L80 70 M20 45 L80 45' stroke='%238a6d3b' stroke-width='0.3'/%3E%3C/svg%3E");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            filter: drop-shadow(0 0 15px #4a0516);
+            transform: translate(-50%, -50%);
+        }
+
+        /* Névoa suave animada */
+        .fog-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0.35;
+            pointer-events: none;
+            mix-blend-mode: color-dodge;
+        }
+        .fog {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg, rgba(40,10,20,0) 0%, rgba(60,15,25,0.15) 25%, rgba(20,5,10,0.2) 50%, rgba(60,15,25,0.15) 75%, rgba(40,10,20,0) 100%);
+            animation: moveFog 40s linear infinite;
+        }
+        .fog2 {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg, rgba(10,0,5,0) 0%, rgba(45,5,15,0.1) 30%, rgba(70,10,20,0.15) 60%, rgba(45,5,15,0.1) 85%, rgba(10,0,5,0) 100%);
+            animation: moveFog 25s linear infinite reverse;
+            top: 20%;
+            opacity: 0.7;
+        }
+
+        @keyframes moveFog {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Velas Virtuais Tridimensionais Sombrias */
+        .candles-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .candle-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+        }
+        .candle {
+            width: 22px;
+            background: linear-gradient(to right, #2b040a, #4a0a14, #1c0206);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+        .candle.c1 { height: 120px; }
+        .candle.c2 { height: 80px; }
+        .candle.c3 { height: 150px; }
+        .candle.c4 { height: 100px; }
+        
+        /* Chama da vela */
+        .flame {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 24px;
+            background: radial-gradient(ellipse at bottom, #ffffff 0%, #ffaa00 40%, #ff3300 80%, transparent 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 1.5s infinite alternate ease-in-out;
+            filter: drop-shadow(0 0 8px #ff5500);
+        }
+        .wick {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 6px;
+            background: #111;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.95; }
+            50% { transform: translateX(-48%) scale(1.05) skewX(2deg); opacity: 1; }
+            100% { transform: translateX(-52%) scale(0.95) skewX(-2deg); opacity: 0.9; }
+        }
+
+        /* Partículas brilhantes discretas */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(212,175,55,0.6) 0%, rgba(212,175,55,0) 70%);
+            border-radius: 50%;
+            animation: floatUp 12s infinite linear;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(105vh) translateX(0) scale(0.5); opacity: 0; }
+            50% { opacity: 0.7; }
+            100% { transform: translateY(-5vh) translateX(50px) scale(1.2); opacity: 0; }
+        }
+
+        /* Ornamentos de Rosas Negras e Espinhos */
+        .vines-decoration {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.25;
+        }
+
+        /* Interface Principal */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            text-align: center;
+            z-index: 10;
+            transition: filter 1s ease;
+        }
+
+        .blurred {
+            filter: blur(4px);
+        }
+
+        h1.question {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 2.2rem;
+            color: #d4af37;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(138, 3, 3, 0.6);
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            line-height: 1.3;
+            animation: fadeIn 2s ease;
+        }
+
+        /* Container do Envelope */
+        .container-envelope {
+            position: relative;
+            width: 420px;
+            height: 280px;
+            margin-bottom: 50px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        @media (max-width: 480px) {
+            .container-envelope {
+                width: 300px;
+                height: 200px;
+            }
+            h1.question {
+                font-size: 1.5rem;
+            }
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #1e1216;
+            border: 2px solid #3a2228;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            border-radius: 4px;
+            transform-style: preserve-3d;
+        }
+
+        /* Detalhes de Textura Antiga Envelhecida */
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;left: 0;right: 0;bottom: 0;
+            border: 1px solid rgba(212,175,55,0.15);
+            margin: 6px;
+            pointer-events: none;
+        }
+
+        /* Flaps do Envelope */
+        .flap-top {
+            position: absolute;
+            top: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 210px solid transparent;
+            border-right: 210px solid transparent;
+            border-top: 140px solid #28181d;
+            transform-origin: top;
+            transition: transform 0.6s ease 0.4s, z-index 0.1s linear 0.6s;
+            z-index: 4;
+        }
+        @media (max-width: 480px) {
+            .flap-top {
+                border-left: 150px solid transparent;
+                border-right: 150px solid transparent;
+                border-top: 100px solid #28181d;
+            }
+        }
+
+        .flap-left {
+            position: absolute;
+            top: 0; left: 0;
+            width: 0; height: 0;
+            border-top: 140px solid transparent;
+            border-bottom: 140px solid transparent;
+            border-left: 210px solid #221419;
+            z-index: 3;
+        }
+        @media (max-width: 480px) {
+            .flap-left {
+                border-top: 100px solid transparent;
+                border-bottom: 100px solid transparent;
+                border-left: 150px solid #221419;
+            }
+        }
+
+        .flap-right {
+            position: absolute;
+            top: 0; right: 0;
+            width: 0; height: 0;
+            border-top: 140px solid transparent;
+            border-bottom: 140px solid transparent;
+            border-right: 210px solid #221419;
+            z-index: 3;
+        }
+        @media (max-width: 480px) {
+            .flap-right {
+                border-top: 100px solid transparent;
+                border-bottom: 100px solid transparent;
+                border-right: 150px solid #221419;
+            }
+        }
+
+        .envelope-body {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 210px solid transparent;
+            border-right: 210px solid transparent;
+            border-bottom: 140px solid #1a0e12;
+            z-index: 2;
+        }
+        @media (max-width: 480px) {
+            .envelope-body {
+                border-left: 150px solid transparent;
+                border-right: 150px solid transparent;
+                border-bottom: 100px solid #1a0e12;
+            }
+        }
+
+        /* Selo de Cera Realista */
+        .wax-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 54px;
+            height: 54px;
+            background: radial-gradient(circle at 35% 35%, #b80c1e 0%, #75030f 60%, #420005 100%);
+            border-radius: 50%;
+            transform: translate(-50%, -30%);
+            z-index: 5;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        .wax-seal::before {
+            content: '🌹';
+            font-size: 1.4rem;
+            opacity: 0.85;
+            filter: drop-shadow(1px 1px 1px #000);
+        }
+
+        /* Animação de Abertura do Envelope */
+        .container-envelope.open .flap-top {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+        .container-envelope.open .wax-seal {
+            transform: translate(-50%, -30%) scale(0.8);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .container-envelope.broken-seal .wax-seal {
+            animation: breakSeal 0.6s forwards ease-in-out;
+        }
+
+        @keyframes breakSeal {
+            0% { transform: translate(-50%, -30%) scale(1); }
+            50% { transform: translate(-50%, -30%) scale(1.1); filter: brightness(1.2); }
+            100% { transform: translate(-50%, -10%) scale(0); opacity: 0; }
+        }
+
+        /* Painel de Botões */
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            align-items: center;
+            position: relative;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 28px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e5d5c5;
+            background: linear-gradient(135deg, #1f0309 0%, #3d0512 50%, #1f0309 100%);
+            border: 1px solid #8a6d3b;
+            border-radius: 2px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.2), transparent);
+            transition: all 0.6s ease;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            color: #ffffff;
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(138, 3, 3, 0.8);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        #btn-no {
+            position: relative;
+            z-index: 100;
+            transition: left 0.2s linear, top 0.2s linear, transform 0.1s ease;
+        }
+
+        .btn-large {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 5px;
+        }
+
+        /* Mensagem Elegante Intermediária */
+        .toast-msg {
+            position: fixed;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: rgba(15, 2, 6, 0.95);
+            border: 1px solid #d4af37;
+            padding: 20px 30px;
+            color: #e5d5c5;
+            font-size: 1.3rem;
+            font-style: italic;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            max-width: 90%;
+            text-align: center;
+            border-radius: 3px;
+        }
+        .toast-msg.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Tela de Mensagem Fina (Se conseguir clicar em não) */
+        .final-fallback {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5,1,3,0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+            padding: 30px;
+            text-align: center;
+        }
+        .final-fallback.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .final-fallback-box {
+            max-width: 500px;
+            padding: 40px;
+            border: 1px solid #3a2228;
+            background: #110508;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            font-size: 1.4rem;
+            color: #c9b09a;
+            line-height: 1.6;
+        }
+
+        /* A CARTA CINEMATOGRÁFICA */
+        .letter-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.2s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .letter-modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .letter-scroll-container {
+            width: 100%;
+            max-width: 550px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: #f4eae1; /* Cor de pergaminho antigo */
+            color: #1c120c;
+            padding: 45px 40px;
+            border-radius: 2px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.95), inset 0 0 40px rgba(139,115,85,0.3);
+            border: 1px solid #d4af37;
+            position: relative;
+            transform: scale(0.8) translateY(50px);
+            transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        @media (max-width: 480px) {
+            .letter-scroll-container {
+                padding: 30px 20px;
+            }
+        }
+
+        .letter-modal.show .letter-scroll-container {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Ornamentos Internos do Pergaminho */
+        .letter-scroll-container::before {
+            content: '';
+            position: absolute;
+            top: 15px; left: 15px; right: 15px; bottom: 15px;
+            border: 1px solid rgba(139,115,85,0.4);
+            pointer-events: none;
+        }
+        .letter-scroll-container::after {
+            content: '';
+            position: absolute;
+            top: 20px; left: 20px; right: 20px; bottom: 20px;
+            border: 2px solid rgba(139,115,85,0.15);
+            pointer-events: none;
+        }
+
+        .letter-content {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            line-height: 1.7;
+            text-align: justify;
+            white-space: pre-line;
+            font-weight: 500;
+        }
+        .letter-content p {
+            margin-bottom: 18px;
+            text-indent: 25px;
+        }
+
+        .letter-footer {
+            margin-top: 35px;
+            text-align: right;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #8a0303;
+            font-style: italic;
+        }
+
+        /* Custom Scrollbar para a carta */
+        .letter-scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .letter-scroll-container::-webkit-scrollbar-track {
+            background: #f4eae1;
+        }
+        .letter-scroll-container::-webkit-scrollbar-thumb {
+            background: #c2b09b;
+            border-radius: 3px;
+        }
+
+        /* Pétalas de Rosas Negras Caindo */
+        .petal {
+            position: fixed;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 30% 30%, #210207 0%, #050001 70%);
+            border-radius: 15px 2px 15px 15px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.85;
+            box-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+            animation: petalFall 8s infinite linear;
+        }
+
+        @keyframes petalFall {
+            0% { transform: translateY(-5vh) rotate(0deg); }
+            100% { transform: translateY(105vh) rotate(720deg) translateX(100px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <div class="loader" id="loader">
-    <div class="loader-ring"></div>
-    <p>Carregando FinanPro...</p>
-  </div>
 
-  <div class="particles" aria-hidden="true"></div>
+    <!-- Atmosfera Gótica de Fundo -->
+    <div class="gothic-bg">
+        <div class="stained-glass"></div>
+        <div class="fog-container">
+            <div class="fog"></div>
+            <div class="fog2"></div>
+        </div>
+        
+        <!-- Velas Acesas -->
+        <div class="candles-container">
+            <div class="candle-group">
+                <div class="candle c1"><div class="wick"></div><div class="flame"></div></div>
+                <div class="candle c2"><div class="wick"></div><div class="flame"></div></div>
+            </div>
+            <div class="candle-group">
+                <div class="candle c4"><div class="wick"></div><div class="flame"></div></div>
+                <div class="candle c3"><div class="wick"></div><div class="flame"></div></div>
+            </div>
+        </div>
 
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <div class="brand-icon">F</div>
-      <div>
-        <h1>FinanPro</h1>
-        <span>Controle premium</span>
-      </div>
+        <!-- Partículas discretas -->
+        <div class="particles" id="particles-container"></div>
     </div>
 
-    <nav class="menu">
-      <button class="menu-item active" data-page="dashboard">▣ Dashboard</button>
-      <button class="menu-item" data-page="financeiro">💳 Controle Financeiro</button>
-      <button class="menu-item" data-page="metas">🎯 Metas</button>
-      <button class="menu-item" data-page="produtividade">⚡ Produtividade</button>
-      <button class="menu-item" data-page="estatisticas">📊 Estatísticas</button>
-      <button class="menu-item" data-page="configuracoes">⚙️ Configurações</button>
-    </nav>
+    <!-- Interface Principal -->
+    <div class="wrapper" id="main-wrapper">
+        <h1 class="question">Você aceitaria namorar comigo?</h1>
 
-    <div class="discipline-box">
-      <span>Score de Disciplina</span>
-      <strong id="disciplineScore">0</strong>
-      <div class="mini-progress"><span id="disciplineBar"></span></div>
+        <!-- Envelope Tridimensional -->
+        <div class="container-envelope" id="envelope-box">
+            <div class="envelope">
+                <div class="flap-top"></div>
+                <div class="flap-left"></div>
+                <div class="flap-right"></div>
+                <div class="envelope-body"></div>
+                <div class="wax-seal"></div>
+            </div>
+        </div>
+
+        <!-- Painel de Botões Interativos -->
+        <div class="buttons-container">
+            <div class="btn-row">
+                <button id="btn-yes" onclick="acceptProposal()">❤️ Sim</button>
+                <button id="btn-no">🖤 Não</button>
+            </div>
+            <button class="btn-large" onclick="acceptWithTime()">🌹 Aceito, mas vamos nos conhecer melhor</button>
+        </div>
     </div>
-  </aside>
 
-  <main class="app">
-    <header class="topbar">
-      <button class="mobile-menu" id="mobileMenu">☰</button>
-      <div>
-        <h2 id="pageTitle">Dashboard</h2>
-        <p>Organize seu dinheiro, reduza impulsos e cresça mês a mês.</p>
-      </div>
-      <button class="btn primary" id="openImpulse">+ Compra grande?</button>
-    </header>
+    <!-- Toast de Transição Elegante -->
+    <div class="toast-msg" id="toast-message"></div>
 
-    <section class="page active" id="dashboard">
-      <div class="cards-grid">
-        <article class="card stat"><span>Saldo Atual</span><strong id="saldoAtual">R$0,00</strong><small>Ganhos - gastos</small></article>
-        <article class="card stat"><span>Total Guardado</span><strong id="totalGuardado">R$0,00</strong><small>Metas + reserva</small></article>
-        <article class="card stat danger"><span>Gastos do Mês</span><strong id="gastosMes">R$0,00</strong><small>Saídas registradas</small></article>
-        <article class="card stat success"><span>Ganhos do Mês</span><strong id="ganhosMes">R$0,00</strong><small>Entradas registradas</small></article>
-        <article class="card stat"><span>Meta Mensal</span><strong id="metaMensalCard">R$0,00</strong><small>Objetivo configurado</small></article>
-        <article class="card stat"><span>Economia Total</span><strong id="economiaTotal">R$0,00</strong><small>Impulsos evitados</small></article>
-        <article class="card stat"><span>Renda Extra</span><strong id="rendaExtraCard">R$0,00</strong><small>Lives, vendas e freelance</small></article>
-        <article class="card stat"><span>Reserva Emergência</span><strong id="reservaCard">R$0,00</strong><small>Segurança financeira</small></article>
-      </div>
-
-      <div class="dashboard-grid">
-        <article class="panel big"><h3>Ganhos vs Gastos</h3><canvas id="incomeExpenseChart"></canvas></article>
-        <article class="panel"><h3>Gastos por Categoria</h3><canvas id="categoryChart"></canvas></article>
-        <article class="panel"><h3>Progresso das Metas</h3><canvas id="goalsChart"></canvas></article>
-      </div>
-
-      <div class="insights panel">
-        <h3>Análise Inteligente</h3>
-        <div id="smartAnalysis" class="analysis-list"></div>
-      </div>
-    </section>
-
-    <section class="page" id="financeiro">
-      <div class="two-cols">
-        <form class="panel form-card" id="expenseForm">
-          <h3>Adicionar Gasto</h3>
-          <input type="number" min="0" step="0.01" id="expenseValue" placeholder="Valor R$" required>
-          <select id="expenseCategory" required>
-            <option value="">Categoria</option><option>Comida</option><option>Delivery</option><option>Jogos</option><option>Compras online</option><option>Transporte</option><option>Lazer</option><option>Contas</option><option>Emergência</option><option>Outros</option>
-          </select>
-          <input id="expenseDescription" placeholder="Descrição" required>
-          <input type="date" id="expenseDate" required>
-          <select id="expenseType"><option>Necessário</option><option>Impulso</option></select>
-          <button class="btn primary" type="submit">Salvar gasto</button>
-        </form>
-
-        <form class="panel form-card" id="incomeForm">
-          <h3>Adicionar Ganho</h3>
-          <input type="number" min="0" step="0.01" id="incomeValue" placeholder="Valor R$" required>
-          <select id="incomeSource" required>
-            <option value="">Fonte</option><option>Salário</option><option>Renda extra</option><option>Vendas online</option><option>Freelance</option><option>Lives</option><option>Discord</option><option>Outros ganhos</option>
-          </select>
-          <input id="incomeDescription" placeholder="Observação">
-          <input type="date" id="incomeDate" required>
-          <button class="btn primary" type="submit">Salvar ganho</button>
-        </form>
-      </div>
-
-      <div class="panel table-panel">
-        <div class="table-head"><h3>Histórico Financeiro</h3><input id="searchInput" placeholder="Pesquisar..."></div>
-        <div class="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Categoria/Fonte</th><th>Descrição</th><th>Valor</th><th>Ação</th></tr></thead><tbody id="financeTable"></tbody></table></div>
-      </div>
-    </section>
-
-    <section class="page" id="metas">
-      <div class="goals-layout">
-        <article class="panel goal-card featured"><h3>Projeto Fiat Uno 2014</h3><p>Preço alvo</p><input type="number" id="carTarget" placeholder="R$0,00"><p>Dinheiro guardado</p><input type="number" id="carSaved" placeholder="R$0,00"><div class="progress neon"><span id="carProgress"></span></div><strong id="carText">0%</strong><small id="carForecast">Previsão: configure os valores</small></article>
-        <article class="panel goal-card featured"><h3>Viagem para Alvorada RS</h3><input type="number" id="travelHotel" placeholder="Hospedagem"><input type="number" id="travelTransport" placeholder="Transporte"><input type="number" id="travelFood" placeholder="Alimentação"><input type="number" id="travelExtras" placeholder="Extras"><input type="number" id="travelSaved" placeholder="Guardado"><div class="progress blue"><span id="travelProgress"></span></div><strong id="travelText">0%</strong></article>
-        <article class="panel goal-card"><h3>Reserva Financeira</h3><input type="number" id="reserveTarget" placeholder="Valor ideal"><input type="number" id="reserveCurrent" placeholder="Valor atual"><div class="progress"><span id="reserveProgress"></span></div><strong id="reserveText">0%</strong><small id="reserveAlert">Comece criando sua reserva.</small></article>
-      </div>
-    </section>
-
-    <section class="page" id="produtividade">
-      <div class="panel"><h3>Hábitos da Semana</h3><div class="habits" id="habitsList"></div></div>
-      <div class="panel"><h3>Anti-Gasto Impulsivo</h3><div class="anti-grid"><div><strong id="avoidedCount">0</strong><span>compras evitadas</span></div><div><strong id="savedImpulse">R$0,00</strong><span>economizados</span></div></div><button class="btn primary" id="avoidPurchase">Registrei uma compra evitada</button><p class="quote" id="quoteBox"></p></div>
-    </section>
-
-    <section class="page" id="estatisticas">
-      <div class="dashboard-grid"><article class="panel big"><h3>Evolução Financeira</h3><canvas id="evolutionChart"></canvas></article><article class="panel"><h3>Crescimento Mensal</h3><canvas id="growthChart"></canvas></article></div>
-    </section>
-
-    <section class="page" id="configuracoes">
-      <div class="panel form-card">
-        <h3>CONFIG - MUDE AQUI</h3>
-        <label>Meta mensal de economia</label><input type="number" id="monthlyGoal" placeholder="R$0,00">
-        <label>Nome do usuário</label><input id="userName" placeholder="Seu nome">
-        <button class="btn primary" id="saveSettings">Salvar configurações</button>
-        <button class="btn danger-btn" id="resetAll">Resetar tudo</button>
-      </div>
-    </section>
-  </main>
-
-  <div class="modal" id="impulseModal">
-    <div class="modal-card">
-      <button class="close" id="closeImpulse">×</button>
-      <h2>Isso aproxima ou afasta seus objetivos?</h2>
-      <p>Antes de comprar, espere 24 horas. Se ainda fizer sentido, compre com consciência.</p>
-      <input type="number" id="avoidedValue" placeholder="Valor que você evitou gastar">
-      <button class="btn primary" id="confirmAvoided">Evitei essa compra</button>
+    <!-- Fallback do Botão Não -->
+    <div class="final-fallback" id="fallback-screen">
+        <div class="final-fallback-box">
+            Mesmo assim... obrigado por ler até aqui. Desejo que sua vida seja cheia de felicidade. 🖤
+        </div>
     </div>
-  </div>
 
-  <script src="script.js"></script>
+    <!-- Tela da Carta Gótica Aberta -->
+    <div class="letter-modal" id="letter-screen">
+        <div class="letter-scroll-container">
+            <div class="letter-content">
+                <p>Olha... eu sei que faz apenas dois dias que nos conhecemos. Pode parecer cedo para dizer tudo isso, mas nesse pouco tempo você despertou algo muito especial em mim.</p>
+                <p>A verdade é que eu me apaixonei por você muito rápido. Talvez isso pareça estranho para você, e eu entendo completamente. Também sei que você talvez ainda não sinta o mesmo, e tudo bem. Sentimentos não podem ser apressados.</p>
+                <p>Só queria que você soubesse que, quando eu digo "eu te amo", não são palavras vazias. Pelo contrário, são palavras cheias de carinho, admiração e sinceridade. Você pode até não acreditar agora, mas eu precisava abrir meu coração.</p>
+                <p>Eu acho você muito linda e extremamente interessante. Cada conversa com você fez nascer um sentimento que eu não esperava sentir tão cedo.</p>
+                <p>Não quero que você se sinta pressionada a sentir o mesmo. Se um dia esse sentimento nascer no seu coração, eu ficarei muito feliz. Se não acontecer, vou respeitar completamente o seu tempo e os seus sentimentos.</p>
+                <p>Eu só queria que você entendesse o quanto você já se tornou importante para mim.</p>
+                <p>Essa carta é para você, escrita com todo o carinho do meu coração.</p>
+                <p>Espero, de verdade, que você goste.</p>
+            </div>
+            <div class="letter-footer">
+                ❤️ Com todo o meu carinho.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicialização de Partículas de Ouro Envelhecido de Fundo
+        const particlesContainer = document.getElementById('particles-container');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.width = `${Math.random() * 4 + 2}px`;
+            particle.style.height = particle.style.width;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.animationDelay = `${Math.random() * 8}s`;
+            particle.style.animationDuration = `${Math.random() * 8 + 8}s`;
+            particlesContainer.appendChild(particle);
+        }
+
+        // Sistema do Botão de Fuga ("Não")
+        const btnNo = document.getElementById('btn-no');
+        
+        function moveButton() {
+            // Calcula posições aleatórias seguras dentro da tela visível
+            const pad = 20;
+            const widthRange = window.innerWidth - btnNo.offsetWidth - (pad * 2);
+            const heightRange = window.innerHeight - btnNo.offsetHeight - (pad * 2);
+            
+            const newLeft = Math.max(pad, Math.floor(Math.random() * widthRange));
+            const newTop = Math.max(pad, Math.floor(Math.random() * heightRange));
+            
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = `${newLeft}px`;
+            btnNo.style.top = `${newTop}px`;
+        }
+
+        // Eventos para Desktop (Mouse) e Mobile (Toque)
+        if(window.matchMedia('(hover:hover)').matches){btnNo.addEventListener('mouseenter',moveButton);}
+        if ('ontouchstart' in window){btnNo.addEventListener('touchstart',function(e){moveButton();},{passive:true});}
+        
+        btnNo.addEventListener('click', function() {
+            document.getElementById('fallback-screen').classList.add('show');
+        });
+
+        // Controle do Envelope e Fluxos de Resposta
+        const envelopeBox = document.getElementById('envelope-box');
+        const mainWrapper = document.getElementById('main-wrapper');
+        const letterScreen = document.getElementById('letter-screen');
+        const toastMessage = document.getElementById('toast-message');
+        let letterOpened = false;
+
+        function triggerCinematicOpen() {
+            if (letterOpened) return;
+            letterOpened = true;
+
+            // Sequência de Animações Cinemáticas (60 FPS sincronizado via CSS)
+            envelopeBox.classList.add('broken-seal');
+            
+            setTimeout(() => {
+                envelopeBox.classList.add('open');
+            }, 600);
+
+            setTimeout(() => {
+                mainWrapper.classList.add('blurred');
+                letterScreen.classList.add('show');
+                startPetalFall();
+            }, 1500);
+        }
+
+        function acceptProposal() {
+            triggerCinematicOpen();
+        }
+
+        function acceptWithTime() {
+            toastMessage.textContent = "Cada grande história começa com um simples passo. Ficarei muito feliz em conhecer você melhor.";
+            toastMessage.classList.add('show');
+            
+            setTimeout(() => {
+                toastMessage.classList.remove('show');
+                triggerCinematicOpen();
+            }, 4500);
+        }
+
+        function handleEnvelopeClick(){}
+
+        // Sistema Dinâmico de Queda de Pétalas de Rosas Negras
+        function startPetalFall() {
+            for (let i = 0; i < 45; i++) {
+                setTimeout(() => {
+                    const petal = document.createElement('div');
+                    petal.classList.add('petal');
+                    petal.style.left = `${Math.random() * 100}%`;
+                    petal.style.width = `${Math.random() * 12 + 10}px`;
+                    petal.style.height = `${Math.random() * 12 + 10}px`;
+                    petal.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                    petal.style.animationDelay = `${Math.random() * 2}s`;
+                    document.body.appendChild(petal);
+                    
+                    // Remove após ciclo para otimização
+                    setTimeout(() => petal.remove(), 10000);
+                }, i * 150);
+            }
+        }
+    </script>
 </body>
 </html>
