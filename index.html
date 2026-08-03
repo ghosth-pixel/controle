@@ -1,1 +1,152 @@
-<!doctype html><html><head><meta charset='utf-8'><title>Financeiro Pro</title><link rel='stylesheet' href='css/style.css'></head><body><h1>Financeiro Pro</h1><div>Saldo: <span id='saldo'>0.00</span></div><input id='desc' placeholder='Descrição'><input id='val' type='number' placeholder='Valor'><select id='tipo'><option>Receita</option><option>Despesa</option></select><button onclick='add()'>Adicionar</button><ul id='lista'></ul><script src='js/app.js'></script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinanPro • Dashboard Financeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="loader" id="loader">
+    <div class="loader-ring"></div>
+    <p>Carregando FinanPro...</p>
+  </div>
+
+  <div class="particles" aria-hidden="true"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-icon">F</div>
+      <div>
+        <h1>FinanPro</h1>
+        <span>Controle premium</span>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <button class="menu-item active" data-page="dashboard">▣ Dashboard</button>
+      <button class="menu-item" data-page="financeiro">💳 Controle Financeiro</button>
+      <button class="menu-item" data-page="metas">🎯 Metas</button>
+      <button class="menu-item" data-page="produtividade">⚡ Produtividade</button>
+      <button class="menu-item" data-page="estatisticas">📊 Estatísticas</button>
+      <button class="menu-item" data-page="configuracoes">⚙️ Configurações</button>
+    </nav>
+
+    <div class="discipline-box">
+      <span>Score de Disciplina</span>
+      <strong id="disciplineScore">0</strong>
+      <div class="mini-progress"><span id="disciplineBar"></span></div>
+    </div>
+  </aside>
+
+  <main class="app">
+    <header class="topbar">
+      <button class="mobile-menu" id="mobileMenu">☰</button>
+      <div>
+        <h2 id="pageTitle">Dashboard</h2>
+        <p>Organize seu dinheiro, reduza impulsos e cresça mês a mês.</p>
+      </div>
+      <button class="btn primary" id="openImpulse">+ Compra grande?</button>
+    </header>
+
+    <section class="page active" id="dashboard">
+      <div class="cards-grid">
+        <article class="card stat"><span>Saldo Atual</span><strong id="saldoAtual">R$0,00</strong><small>Ganhos - gastos</small></article>
+        <article class="card stat"><span>Total Guardado</span><strong id="totalGuardado">R$0,00</strong><small>Metas + reserva</small></article>
+        <article class="card stat danger"><span>Gastos do Mês</span><strong id="gastosMes">R$0,00</strong><small>Saídas registradas</small></article>
+        <article class="card stat success"><span>Ganhos do Mês</span><strong id="ganhosMes">R$0,00</strong><small>Entradas registradas</small></article>
+        <article class="card stat"><span>Meta Mensal</span><strong id="metaMensalCard">R$0,00</strong><small>Objetivo configurado</small></article>
+        <article class="card stat"><span>Economia Total</span><strong id="economiaTotal">R$0,00</strong><small>Impulsos evitados</small></article>
+        <article class="card stat"><span>Renda Extra</span><strong id="rendaExtraCard">R$0,00</strong><small>Lives, vendas e freelance</small></article>
+        <article class="card stat"><span>Reserva Emergência</span><strong id="reservaCard">R$0,00</strong><small>Segurança financeira</small></article>
+      </div>
+
+      <div class="dashboard-grid">
+        <article class="panel big"><h3>Ganhos vs Gastos</h3><canvas id="incomeExpenseChart"></canvas></article>
+        <article class="panel"><h3>Gastos por Categoria</h3><canvas id="categoryChart"></canvas></article>
+        <article class="panel"><h3>Progresso das Metas</h3><canvas id="goalsChart"></canvas></article>
+      </div>
+
+      <div class="insights panel">
+        <h3>Análise Inteligente</h3>
+        <div id="smartAnalysis" class="analysis-list"></div>
+      </div>
+    </section>
+
+    <section class="page" id="financeiro">
+      <div class="two-cols">
+        <form class="panel form-card" id="expenseForm">
+          <h3>Adicionar Gasto</h3>
+          <input type="number" min="0" step="0.01" id="expenseValue" placeholder="Valor R$" required>
+          <select id="expenseCategory" required>
+            <option value="">Categoria</option><option>Comida</option><option>Delivery</option><option>Jogos</option><option>Compras online</option><option>Transporte</option><option>Lazer</option><option>Contas</option><option>Emergência</option><option>Outros</option>
+          </select>
+          <input id="expenseDescription" placeholder="Descrição" required>
+          <input type="date" id="expenseDate" required>
+          <select id="expenseType"><option>Necessário</option><option>Impulso</option></select>
+          <button class="btn primary" type="submit">Salvar gasto</button>
+        </form>
+
+        <form class="panel form-card" id="incomeForm">
+          <h3>Adicionar Ganho</h3>
+          <input type="number" min="0" step="0.01" id="incomeValue" placeholder="Valor R$" required>
+          <select id="incomeSource" required>
+            <option value="">Fonte</option><option>Salário</option><option>Renda extra</option><option>Vendas online</option><option>Freelance</option><option>Lives</option><option>Discord</option><option>Outros ganhos</option>
+          </select>
+          <input id="incomeDescription" placeholder="Observação">
+          <input type="date" id="incomeDate" required>
+          <button class="btn primary" type="submit">Salvar ganho</button>
+        </form>
+      </div>
+
+      <div class="panel table-panel">
+        <div class="table-head"><h3>Histórico Financeiro</h3><input id="searchInput" placeholder="Pesquisar..."></div>
+        <div class="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Categoria/Fonte</th><th>Descrição</th><th>Valor</th><th>Ação</th></tr></thead><tbody id="financeTable"></tbody></table></div>
+      </div>
+    </section>
+
+    <section class="page" id="metas">
+      <div class="goals-layout">
+        <article class="panel goal-card featured"><h3>Projeto Fiat Uno 2014</h3><p>Preço alvo</p><input type="number" id="carTarget" placeholder="R$0,00"><p>Dinheiro guardado</p><input type="number" id="carSaved" placeholder="R$0,00"><div class="progress neon"><span id="carProgress"></span></div><strong id="carText">0%</strong><small id="carForecast">Previsão: configure os valores</small></article>
+        <article class="panel goal-card featured"><h3>Viagem para Alvorada RS</h3><input type="number" id="travelHotel" placeholder="Hospedagem"><input type="number" id="travelTransport" placeholder="Transporte"><input type="number" id="travelFood" placeholder="Alimentação"><input type="number" id="travelExtras" placeholder="Extras"><input type="number" id="travelSaved" placeholder="Guardado"><div class="progress blue"><span id="travelProgress"></span></div><strong id="travelText">0%</strong></article>
+        <article class="panel goal-card"><h3>Reserva Financeira</h3><input type="number" id="reserveTarget" placeholder="Valor ideal"><input type="number" id="reserveCurrent" placeholder="Valor atual"><div class="progress"><span id="reserveProgress"></span></div><strong id="reserveText">0%</strong><small id="reserveAlert">Comece criando sua reserva.</small></article>
+      </div>
+    </section>
+
+    <section class="page" id="produtividade">
+      <div class="panel"><h3>Hábitos da Semana</h3><div class="habits" id="habitsList"></div></div>
+      <div class="panel"><h3>Anti-Gasto Impulsivo</h3><div class="anti-grid"><div><strong id="avoidedCount">0</strong><span>compras evitadas</span></div><div><strong id="savedImpulse">R$0,00</strong><span>economizados</span></div></div><button class="btn primary" id="avoidPurchase">Registrei uma compra evitada</button><p class="quote" id="quoteBox"></p></div>
+    </section>
+
+    <section class="page" id="estatisticas">
+      <div class="dashboard-grid"><article class="panel big"><h3>Evolução Financeira</h3><canvas id="evolutionChart"></canvas></article><article class="panel"><h3>Crescimento Mensal</h3><canvas id="growthChart"></canvas></article></div>
+    </section>
+
+    <section class="page" id="configuracoes">
+      <div class="panel form-card">
+        <h3>CONFIG - MUDE AQUI</h3>
+        <label>Meta mensal de economia</label><input type="number" id="monthlyGoal" placeholder="R$0,00">
+        <label>Nome do usuário</label><input id="userName" placeholder="Seu nome">
+        <button class="btn primary" id="saveSettings">Salvar configurações</button>
+        <button class="btn danger-btn" id="resetAll">Resetar tudo</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="impulseModal">
+    <div class="modal-card">
+      <button class="close" id="closeImpulse">×</button>
+      <h2>Isso aproxima ou afasta seus objetivos?</h2>
+      <p>Antes de comprar, espere 24 horas. Se ainda fizer sentido, compre com consciência.</p>
+      <input type="number" id="avoidedValue" placeholder="Valor que você evitou gastar">
+      <button class="btn primary" id="confirmAvoided">Evitei essa compra</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
